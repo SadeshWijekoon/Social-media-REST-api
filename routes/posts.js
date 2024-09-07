@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Posts =  require('../modals/Posts')
+const User = require('../modals/user')
 
 // create a post
 router.post('/',async(req,res)=>{
@@ -41,9 +42,53 @@ router.delete('/:id',async(req,res)=>{
       res.status(500).json(err)
    }
 })
-// like post
-
+// like post and unlike a post
+ router.post('/:id/like',async(req,res)=>{
+   try{
+     const post =await Posts.findById(req.params.id)
+     if(!post.likes.includes(req.body.userId)){
+       await post.updateOne({$push:{likes:req.body.userId}}) // like post
+       res.status(200).json('The post has been liked')
+     }else{
+       await post.updateOne({$pull:{likes:req.body.userId}}) // unlike post
+       res.status(200).json('the post has been unliked')
+     }
+   }catch(err){
+      res.status(500).json(err)
+   }
+ })
 // get a post
+router.get('/:id', async (req, res) => {
+   try {
+     const post = await Posts.findById(req.params.id);
+     
+     if (post) {
+       res.status(200).json(post);
+     } else {
+       res.status(404).json('Post does not exist');
+     }
+   } catch (err) {
+     res.status(500).json(err);
+   }
+ });
+ 
+   
 // get timeline posts
+router.get('/timeline/all',async(req,res)=>{
+   
+   try{
+    const currentUser = await User.findById(req.body.userId) 
+    const userPost = await Posts.find({userId:currentUser._id})
+    const frdPost= await Promise.all(
+      currentUser.follwins.map(frdId=>{
+       return  Posts.find({userId:frdId})
+      })
+    )
+    res.json(userPost.concat(...frdPost))
+   }catch(err){
+      res.status(500).json(err)
+   }
+
+})
 
 module.exports = router;
