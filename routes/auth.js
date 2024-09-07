@@ -26,7 +26,7 @@ router.post('/register',async(req,res)=>{
 //login
 router.post('/login',async(req,res)=>{
   try{
-   const user = await User.findOne({email:req.body.email})
+   const user = await User.findOne({email:req.body.email})//mongoose method it return 1 st if its matching
    ! user && res.status(404).json("user not found")
    const validPassword = await bcrypt.compare(req.body.password,user.password)
    ! validPassword && res.status(400).json('wrong password')
