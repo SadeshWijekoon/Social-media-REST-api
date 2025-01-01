@@ -12,11 +12,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Set up Node.js
+      # Set up Node.js (updated to version 16 or later)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Update if you're using a different version
+          node-version: '16'  # Update to Node.js 16 or a later version
 
       # Install dependencies
       - name: Install dependencies
@@ -28,7 +28,7 @@ jobs:
 
       # Run tests using npx to ensure Jest is executed
       - name: Run tests
-        run: npx jest --ci --maxWorkers=2  # Add CI flag for better performance in CI/CD
+        run: npx jest --ci --maxWorkers=2
 
       # Deploy to Vercel
       - name: Deploy to Vercel
@@ -37,6 +37,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'  # Optional: deploy to production environment
+          vercel-args: '--prod'
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Ensure environment variable for token is set
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
