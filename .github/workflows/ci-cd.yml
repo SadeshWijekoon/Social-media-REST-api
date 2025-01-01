@@ -27,13 +27,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # Fix permissions for Jest before running tests
+      - name: Fix permissions for Jest
+        run: sudo chmod +x ./node_modules/.bin/jest
+
       # Run tests (ensure Jest is working correctly)
       - name: Run tests
         run: npm run test -- --ci --maxWorkers=2  # Adjust for your test configuration
-
-      # Fix permissions if necessary for Jest
-      - name: Fix permissions for Jest
-        run: sudo chmod +x ./node_modules/.bin/jest
 
       # Deploy to Vercel
       - name: Deploy to Vercel
@@ -47,4 +47,3 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       # Optionally, notify or perform additional steps here
-
