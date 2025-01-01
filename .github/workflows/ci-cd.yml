@@ -4,38 +4,30 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '14'  # Update if you're using a different version
 
-      - name: Install Dependencies
+      # Install dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Run Tests
-        run: npm test
+      # Ensure Jest is installed correctly
+      - name: Check installed packages
+        run: npm list --depth=0
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      # Run tests using npx to ensure Jest is executed
+      - name: Run tests
+        run: npx jest
