@@ -1,36 +1,41 @@
+name: CI/CD Pipeline
+
 on:
   push:
     branches:
-      - main
+      - main  # Trigger on push to main branch
+  pull_request:
+    branches:
+      - main  # Trigger on PR to main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Set up Node.js (updated to version 16 or later)
+      # Set up Node.js (use version 16 or later)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Update to Node.js 16 or a later version
+          node-version: '16'  # You can adjust the version as needed
 
       # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Ensure Jest is installed correctly
+      # Check installed packages (optional)
       - name: Check installed packages
         run: npm list --depth=0
 
-      # Run tests using npx to ensure Jest is executed
+      # Run tests using Jest (if you have tests set up)
       - name: Run tests
-        run: npx jest --ci --maxWorkers=2
+        run: npm run test --ci --maxWorkers=2  # Adjust for your test configuration
 
-      # Deploy to Vercel
+      # Deploy to Vercel (ensure VERCEL_TOKEN and other secrets are set)
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
