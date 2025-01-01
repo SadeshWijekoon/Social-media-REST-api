@@ -27,7 +27,7 @@ jobs:
 
       # Run tests using npx to ensure Jest is executed
       - name: Run tests
-        run: npx jest
+        run: npx jest --ci --maxWorkers=2  # Add CI flag for better performance in CI/CD
 
       # Deploy to Vercel
       - name: Deploy to Vercel
@@ -37,3 +37,5 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'  # Optional: deploy to production environment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Ensure environment variable for token is set
