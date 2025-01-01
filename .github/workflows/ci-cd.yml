@@ -3,45 +3,48 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main  # Trigger deployment on push to the main branch
   pull_request:
     branches:
-      - main  # Trigger on PR to main branch
+      - main  # Optionally, trigger deployment on PR to main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # Checkout code from the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Set up Node.js (use version 16 or later)
+      # Set up Node.js (make sure it matches your Node version)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # You can adjust the version as needed
+          node-version: '16'
 
       # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Check installed packages (optional)
-      - name: Check installed packages
-        run: npm list --depth=0
-
-      # Run tests using Jest (if you have tests set up)
+      # Run tests (ensure Jest is working correctly)
       - name: Run tests
-        run: npm run test --ci --maxWorkers=2  # Adjust for your test configuration
+        run: npm run test -- --ci --maxWorkers=2  # Adjust for your test configuration
 
-      # Deploy to Vercel (ensure VERCEL_TOKEN and other secrets are set)
+      # Fix permissions if necessary for Jest
+      - name: Fix permissions for Jest
+        run: sudo chmod +x ./node_modules/.bin/jest
+
+      # Deploy to Vercel
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: '--prod'  # Deploy to production
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      # Optionally, notify or perform additional steps here
+
